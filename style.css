@@ -31,9 +31,9 @@ select {
 body {
     align-items: center;
     background:
-        radial-gradient(circle at 15% 18%, rgba(111, 148, 255, 0.22), transparent 26%),
-        radial-gradient(circle at 82% 80%, rgba(13, 194, 255, 0.12), transparent 24%),
-        linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(235,240,247,0.96) 30%, rgba(244,247,252,0.98) 100%);
+        radial-gradient(circle at 0 0, rgba(32, 49, 157, 0.2), transparent 28%),
+        radial-gradient(circle at 100% 100%, rgba(112, 120, 133, 0.22), transparent 24%),
+        linear-gradient(90deg, #dbdbdb 0%, #ffffff 100%);
     color: var(--ink);
     display: flex;
     font-family: "Google Sans Flex", sans-serif;
@@ -45,12 +45,12 @@ body {
 }
 
 #app {
-    background: rgba(255, 255, 255, 0.56);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(18px) saturate(1.15);
-    -webkit-backdrop-filter: blur(18px) saturate(1.15);
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(32, 49, 157, 0.2);
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
     border-radius: 32px;
-    box-shadow: 0 18px 40px rgba(9, 17, 26, 0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+    box-shadow: var(--shadow-strong);
     margin: 0 auto;
     max-width: 1200px;
     min-height: 700px;
@@ -252,8 +252,8 @@ select:focus-visible {
 }
 
 .countdown {
-    background: linear-gradient(135deg, #00fff0 0%, #003363 100%);
-    border: 2px solid #003363;
+    background: linear-gradient(135deg, #00bfcf 0%, #003363 100%);
+    border: 2px solid rgba(255, 255, 255, 0.9);
     border-radius: 999px;
     box-shadow: 0 8px 24px rgba(23, 19, 45, .2);
     color: white;
@@ -340,38 +340,38 @@ select:focus-visible {
     align-items: center;
     display: flex;
     justify-content: center;
-    height: 120px;
-    padding: 24px 48px;
+    height: 102px;
+    padding: 20px 48px;
 }
 
 .brand {
     align-items: center;
     display: inline-flex;
     font-family: "Google Sans Flex", sans-serif;
-    font-size: 32px;
+    font-size: 42px;
     font-weight: 700;
     gap: 10px;
     letter-spacing: .02em;
-    margin-top: 15px;
+    margin: 0;
     text-align: center;
 }
 
 .brand-mark {
     align-items: center;
-    background: var(--ink);
-    border-radius: 9px;
+    background: #0066c8;
+    border-radius: 10px;
     color: white;
     display: inline-flex;
-    height: 30px;
+    height: 45px;
     justify-content: center;
-    width: 30px;
+    width: 45px;
 }
 
 .hero {
     background: linear-gradient(120deg, #00fff0 0%, #0083fe 100%);
     color: white;
     display: flex;
-    min-height: 390px;
+    min-height: 567px;
     overflow: hidden;
     padding: 48px;
     position: relative;
@@ -390,7 +390,7 @@ select:focus-visible {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin-bottom: 48px;
+    margin: 29px 0 48px;
     text-align: center;
 }
 
@@ -400,7 +400,7 @@ select:focus-visible {
 }
 
 .hero-ranking-heading h1 {
-    font-size: clamp(30px, 5.2vw, 64px);
+    font-size: clamp(30px, 5.2vw, 54px);
     white-space: nowrap;
     text-shadow: none;
 }
@@ -425,7 +425,7 @@ h1 {
     line-height: .98;
 }
 
-h1 span { color: var(--purple); }
+.hero-ranking-heading h1 span { color: #ffffff; }
 
 .neon-text {
     color: var(--blue);
@@ -439,6 +439,7 @@ h1 span { color: var(--purple); }
     border-radius: 18px;
     box-shadow: 0 18px 40px rgba(35, 21, 113, .25);
     color: var(--ink);
+    min-height: 288px;
     padding: 21px;
 }
 
@@ -490,7 +491,7 @@ h1 span { color: var(--purple); }
 
 .ranking-preview-list {
     max-height: 390px;
-    min-height: 172px;
+    min-height: 177px;
     overflow-y: auto;
     padding: 7px 8px 7px 0;
 }
@@ -629,10 +630,10 @@ h1 span { color: var(--purple); }
     align-items: center;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 8px;
     justify-content: center;
     min-height: 220px;
-    padding: 48px;
+    padding: 44px 48px;
     text-align: center;
 }
 
