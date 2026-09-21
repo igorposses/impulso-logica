@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackathon Painel</title>
+    <!-- Importa o arquivo CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="class-selection" class="class-selection" aria-labelledby="class-selection-title">
+        <div class="class-selection-card">
+            <p class="eyebrow">IMPULSO LÓGICA</p>
+            <h1 id="class-selection-title">Selecione sua turma</h1>
+            <p>Todos os chamados e o ranking serão exclusivos da turma escolhida.</p>
+            <div class="class-options">
+                <button onclick="selectClass('1 INFO 01')">1 INFO 01</button>
+                <button onclick="selectClass('1 INFO 02')">1 INFO 02</button>
+            </div>
+        </div>
+    </div>
+    <div id="countdown" class="countdown" aria-label="Tempo restante">01:30:00</div>
+    <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+    <div id="app">
+        <div id="victory-overlay" class="victory-overlay" aria-hidden="true">
+            <div class="victory-poster">
+                <p class="eyebrow">DESAFIO ENCERRADO</p>
+                <p class="victory-label">CAMPEÃO</p>
+                <h2 id="winner-name">Aguardando resultado</h2>
+                <p id="winner-score"></p>
+            </div>
+        </div>
+        <!-- Tela Inicial -->
+        <div id="home-view" class="view active">
+            <header class="site-header">
+                <div class="brand"><span class="brand-mark">H</span> IMPULSO LÓGICA</div>
+            </header>
+            <section class="hero">
+                <div class="hero-ranking">
+                    <div class="hero-ranking-heading">
+                        <div>
+                            <p class="eyebrow">EEEM MÁRIO GURGEL - LÓGICA DE PROGRAMAÇÃO E GAMIFICAÇÃO</p>
+                            <h1>Placar da <span>Competição</span></h1>
+                        </div>
+                    </div>
+                    <div class="ranking-preview">
+                        <div class="ranking-preview-heading">
+                            <span><i class="live-dot"></i> AO VIVO</span>
+                        </div>
+                        <div id="home-ranking-body" class="ranking-preview-list"></div>
+                        <button class="ranking-link" onclick="navigate('screen-view')">Ver ranking completo <span>↗</span></button>
+                    </div>
+                </div>
+            </section>
+            <section class="access-section">
+                <p class="section-kicker">ACESSOS DO EVENTO</p>
+                <div class="access-grid">
+                    <button class="access-card" onclick="navigate('student-view')">
+                        <span class="access-icon">✦</span><span><strong>Área do aluno</strong><small>Enviar questões resolvidas</small></span><b>→</b>
+                    </button>
+                    <button class="access-card" onclick="navigate('teacher-login')">
+                        <span class="access-icon">◇</span><span><strong>Painel do professor</strong><small>Validar as soluções da turma</small></span><b>→</b>
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Login do Professor -->
+        <div id="teacher-login" class="view">
+            <p class="eyebrow">ÁREA RESTRITA</p>
+            <h2>Acesso do professor</h2>
+            <button onclick="loginTeacher()">Entrar</button>
+            <button onclick="navigate('home-view')" class="btn-outline">Voltar</button>
+        </div>
+
+        <!-- Tela do Aluno -->
+        <div id="student-view" class="view">
+            <p class="eyebrow">ÁREA DO ALUNO</p>
+            <h2>Registrar solução</h2>
+            <div id="student-registration">
+                <label for="student-name">Selecione seu nome</label>
+                <select id="student-name">
+                    <option value="">Escolha seu nome</option>
+                </select>
+                <label class="nickname-option">
+                    <input type="checkbox" id="use-nickname" onchange="toggleNicknameInput()">
+                    Quero usar um apelido
+                </label>
+                <input type="text" id="student-nickname" maxlength="24" placeholder="Digite seu apelido">
+                <button onclick="saveStudentName()">Confirmar nome</button>
+            </div>
+            <div id="registered-student" class="registered-student"></div>
+            <label>Escolha a questão resolvida</label>
+            <div id="question-choices" class="question-choices"></div>
+            <input type="hidden" id="student-task">
+            <button onclick="submitTask()">Solicitar Validação</button>
+            <button onclick="navigate('home-view')" class="btn-outline">Voltar</button>
+            <div id="student-msg"></div>
+        </div>
+
+        <!-- Tela do Professor -->
+        <div id="teacher-view" class="view">
+            <p class="eyebrow">ÁREA DO PROFESSOR</p>
+            <h2>Fila de validação</h2>
+            <p id="selected-class-label" class="selected-class-label"></p>
+            <div class="teacher-controls">
+                <button id="release-challenge-button" onclick="releaseChallenge()">Liberar desafio</button>
+                <button id="start-timer-button" onclick="startCompetition()">Iniciar cronômetro</button>
+                <button id="pause-timer-button" onclick="togglePauseCompetition()" style="display: none;">⏸ Pausar</button>
+                <button id="resume-timer-button" onclick="togglePauseCompetition()" style="display: none;">▶ Retomar</button>
+                <button class="btn-danger" onclick="clearClassData()">Apagar dados da turma</button>
+            </div>
+            <p id="competition-status" class="competition-status"></p>
+            <p style="font-size: 0.9em; text-align: center;">Vá até a mesa, confira e aprove ou rejeite.</p>
+            <div id="pending-tasks"></div>
+            <button onclick="navigate('home-view')" class="btn-outline">Sair do Painel</button>
+        </div>
+
+        <!-- Tela do Ranking -->
+        <div id="screen-view" class="view">
+            <p class="eyebrow">EEEM MÁRIO GURGEL - LÓGICA DE PROGRAMAÇÃO E GAMIFICAÇÃO</p>
+            <h2 class="neon-text">Placar da Competição</h2>
+            <table id="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Posição</th>
+                        <th>Aluno</th>
+                        <th>Progresso</th>
+                    </tr>
+                </thead>
+                <tbody id="ranking-body"></tbody>
+            </table>
+            <button onclick="navigate('home-view')" class="btn-outline mt-20">Voltar ao Início</button>
+        </div>
+    </div>
+
+    <!-- Supabase é usado somente com a chave pública (anon/publishable). -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Importa o arquivo Javascript -->
+    <script src="script.js"></script>
+</body>
+</html>
