@@ -11,6 +11,7 @@ const CLASS_ROSTERS = {
 };
 const SUPABASE_URL = 'https://ezfpxqpcgknmtglcvecn.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_ER9lLXcphbZKK1YwBFUPqQ_gq5TlGDg';
+const TEACHER_PASSWORD = '78563';
 let supabaseClient = null;
 let requestsCache = null;
 let competitionStartCache = null;
@@ -310,6 +311,21 @@ function navigate(viewId) {
 }
 
 function loginTeacher() {
+    const input = document.getElementById('teacher-password-input');
+    const password = input ? input.value : '';
+    const errorMsg = document.getElementById('teacher-login-error');
+    
+    if (password !== TEACHER_PASSWORD) {
+        if (errorMsg) errorMsg.style.display = 'block';
+        if (input) {
+            input.value = '';
+            input.focus();
+        }
+        return;
+    }
+    
+    if (errorMsg) errorMsg.style.display = 'none';
+    if (input) input.value = '';
     navigate('teacher-view');
 }
 
@@ -576,8 +592,7 @@ function notifyRequestChanges(requests) {
 }
 
 function handleRequest(id, status) {
-    if (!getCompetitionStart() || competitionFinished || Date.now() >= getCompetitionStart() + COMPETITION_DURATION_MS) {
-        finishCompetition();
+    if (!getCompetitionStart()) {
         return;
     }
 
@@ -659,23 +674,14 @@ function renderQuestionChoices(requests) {
     const approved = new Set(studentRequests.filter((request) => request.status === 'approved').map((request) => Number(request.task)));
     const pending = new Set(studentRequests.filter((request) => request.status === 'pending').map((request) => Number(request.task)));
     const rejected = [...new Set(studentRequests.filter((request) => request.status === 'rejected').map((request) => Number(request.task)))];
-    let unlockedThrough = 2;
-    if (approved.has(1) || approved.has(2)) {
-        unlockedThrough = 3;
-        while (unlockedThrough < TOTAL_QUESTIONS && approved.has(unlockedThrough)) {
-            unlockedThrough += 1;
-        }
-    }
-
     container.innerHTML = Array.from({ length: TOTAL_QUESTIONS }, (_, index) => index + 1)
         .map((task) => {
             const isApproved = approved.has(task);
             const isPending = pending.has(task);
             const isRejected = rejected.includes(task);
-            const isLocked = task > unlockedThrough;
-            const stateClass = isApproved ? 'approved' : isPending ? 'pending' : isRejected ? 'rejected' : isLocked ? 'locked' : '';
-            const stateText = isApproved ? 'Aprovado' : isPending ? 'Em validação' : isRejected ? 'Tentar novamente' : isLocked ? 'Bloqueado' : 'Disponível';
-            const disabled = isApproved || isPending || isLocked ? 'disabled' : '';
+            const stateClass = isApproved ? 'approved' : isPending ? 'pending' : isRejected ? 'rejected' : '';
+            const stateText = isApproved ? 'Aprovado' : isPending ? 'Em validação' : isRejected ? 'Tentar novamente' : 'Disponível';
+            const disabled = isApproved || isPending ? 'disabled' : '';
             return `
                 <label class="question-choice ${stateClass}">
                     <input type="checkbox" ${disabled} onchange="selectTask(${task}, this)">
@@ -925,8 +931,21 @@ function updateViews() {
     renderRanking(requests);
 }
 
-document.getElementById('class-selection').classList.remove('hidden');
+if (getClassId()) {
+    document.getElementById('class-selection').classList.add('hidden');
+    loadSupabaseData();
+} else {
+    document.getElementById('class-selection').classList.remove('hidden');
+}
 updateCountdown();
 setInterval(updateCountdown, 1000);
 window.addEventListener('storage', updateViews);
 updateViews();
+
+function closeVictoryOverlay() {
+    const overlay = document.getElementById('victory-overlay');
+    if (overlay) {
+        overlay.classList.remove('visible');
+        overlay.setAttribute('aria-hidden', 'true');
+    }
+}
