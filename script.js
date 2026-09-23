@@ -291,13 +291,6 @@ function populateStudentOptions() {
     });
 }
 
-function toggleNicknameInput() {
-    const input = document.getElementById('student-nickname');
-    const enabled = document.getElementById('use-nickname').checked;
-    input.style.display = enabled ? 'block' : 'none';
-    if (!enabled) input.value = '';
-}
-
 function navigate(viewId) {
     const view = document.getElementById(viewId);
     if (!view) {
@@ -417,6 +410,7 @@ async function clearClassData() {
     competitionFinished = false;
     competitionPausedMs = 0;
     localStorage.removeItem(`${COMPETITION_STATE_KEY}:${classId}`);
+    localStorage.removeItem(`victoryShown_${classId}`);
     if (supabaseClient) {
         const [requestsResult, stateResult] = await Promise.all([
             supabaseClient.from('requests').delete().eq('class_id', classId),
@@ -434,25 +428,18 @@ async function clearClassData() {
 function saveStudentName() {
     const nameInput = document.getElementById('student-name');
     const officialName = nameInput.value.trim();
-    const useNickname = document.getElementById('use-nickname').checked;
-    const nickname = document.getElementById('student-nickname').value.trim();
 
     if (!officialName) {
         alert('Selecione seu nome para continuar.');
         nameInput.focus();
         return;
     }
-    if (useNickname && !nickname) {
-        alert('Digite o apelido que será exibido no ranking.');
-        document.getElementById('student-nickname').focus();
-        return;
-    }
 
     const profile = {
         officialName,
         officialDisplayName: formatStudentName(officialName),
-        displayName: useNickname ? nickname : formatStudentName(officialName),
-        nickname: useNickname ? nickname : ''
+        displayName: formatStudentName(officialName),
+        nickname: ''
     };
     localStorage.setItem(STUDENT_PROFILE_KEY, JSON.stringify(profile));
     localStorage.setItem(STUDENT_NAME_KEY, profile.displayName);
@@ -652,7 +639,6 @@ function updateStudentIdentity() {
         registeredStudent.style.display = 'none';
     }
     populateStudentOptions();
-    toggleNicknameInput();
 }
 
 function selectTask(task, input) {
@@ -867,10 +853,15 @@ function finishCompetition() {
     document.getElementById('winner-score').textContent = winner
         ? `${winner.score}/${TOTAL_QUESTIONS} questões aprovadas`
         : 'Nenhuma questão foi aprovada.';
-    const overlay = document.getElementById('victory-overlay');
-    overlay.classList.add('visible');
-    overlay.setAttribute('aria-hidden', 'false');
-    launchConfetti();
+    
+    const victoryKey = `victoryShown_${getClassId()}`;
+    if (!localStorage.getItem(victoryKey)) {
+        const overlay = document.getElementById('victory-overlay');
+        overlay.classList.add('visible');
+        overlay.setAttribute('aria-hidden', 'false');
+        launchConfetti();
+        localStorage.setItem(victoryKey, 'true');
+    }
 }
 
 function getRanking(requests) {
@@ -948,4 +939,20 @@ function closeVictoryOverlay() {
         overlay.classList.remove('visible');
         overlay.setAttribute('aria-hidden', 'true');
     }
+}
+
+function downloadRankingCSV() {
+    const ranking = getRanking(getRequests());
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Posição,Aluno,Questões Aprovadas\n";
+    ranking.forEach((entry, index) => {
+        csvContent += `${index + 1},"${entry.student}",${entry.score}\n`;
+    });
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Ranking_Turma_${getClassId()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }

@@ -784,22 +784,6 @@ label {
     background: linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%);
 }
 
-.nickname-option {
-    align-items: center;
-    display: flex;
-    gap: 8px;
-    font-weight: 500;
-}
-
-.nickname-option input {
-    accent-color: var(--purple);
-    height: 16px;
-    padding: 0;
-    width: 16px;
-}
-
-#student-nickname { display: none; }
-
 .official-name {
     color: var(--muted);
     display: block;

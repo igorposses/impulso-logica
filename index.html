@@ -85,11 +85,7 @@
                 <select id="student-name">
                     <option value="">Escolha seu nome</option>
                 </select>
-                <label class="nickname-option">
-                    <input type="checkbox" id="use-nickname" onchange="toggleNicknameInput()">
-                    Quero usar um apelido
-                </label>
-                <input type="text" id="student-nickname" maxlength="24" placeholder="Digite seu apelido">
+
                 <button onclick="saveStudentName()">Confirmar nome</button>
             </div>
             <div id="registered-student" class="registered-student"></div>
@@ -116,6 +112,8 @@
             <p id="competition-status" class="competition-status"></p>
             <p style="font-size: 0.9em; text-align: center;">Vá até a mesa, confira e aprove ou rejeite.</p>
             <div id="pending-tasks"></div>
+            <button onclick="downloadRankingCSV()">Salvar Ranking (CSV)</button>
+            <button onclick="changeClass()" class="btn-outline">Trocar Turma</button>
             <button onclick="navigate('home-view')" class="btn-outline">Sair do Painel</button>
         </div>
 
